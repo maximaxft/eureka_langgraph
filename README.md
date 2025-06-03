@@ -57,11 +57,8 @@ Dans un terminal :
 source venv/bin/activate  # Sur Mac/Linux
 # ou venv\Scripts\activate sur Windows
 
-# Se placer dans le dossier backend
-cd backend
-
 # Lancer le serveur FastAPI
-uvicorn main:app --reload
+uvicorn backend.main:app --reload
 ```
 
 ### 2. Démarrer le serveur frontend

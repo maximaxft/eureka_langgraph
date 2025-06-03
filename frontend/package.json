@@ -10,5 +10,8 @@
   "scripts": {
     "start": "npx serve -s build",
     "dev": "npx vite"
+  },
+  "devDependencies": {
+    "sass-embedded": "^1.89.1"
   }
 }
