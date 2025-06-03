@@ -1,19 +1,55 @@
 # Présentation Chatbot IA
 
-Ce projet propose un chatbot intelligent pour présenter l'équipe, ses objectifs, et le concept d'Intelligent Digital Twins, à partir des documents du dossier `docs` et d'images associées.
+Ce projet propose un chatbot intelligent pour présenter l'équipe, ses objectifs, et le concept d'Intelligent Digital Twins, illustré par un exemple d'incident généré nommé **KDOEM45D**. Le chatbot est capable de répondre aussi bien aux questions générales qu'aux questions spécifiques liées à cet incident, démontrant ainsi ses capacités de routage des requêtes
 
 ## Structure du projet
 
-- `frontend/` : Interface web (React)
-- `backend/`  : API et moteur IA (FastAPI)
-- `docs/`     : Documents de présentation (Markdown)
-- `images/`   : Images à afficher lors de la présentation
+- `frontend/` : Interface web (React)  
+- `backend/` : API et moteur IA (FastAPI)  
+  - `config/`  
+  - `main.py`  
+  - `models/`  
+  - `requirements.txt`  
+  - `routes/`  
+  - `services/`  
+- `docs/` : Documents de présentation (Markdown)  
+- `images/` : Images à afficher lors de la présentation  
+
+---
+
+## Endpoints backend
+
+Le backend expose deux endpoints principaux :  
+
+- **`/new-chat`** : Pour récupérer l’ID de session d’un nouveau chat.  
+- **`/ask`** : Pour poser des questions au backend.  
+
+---
+
+## Architecture du backend
+
+Le backend utilise un **graphe LangGraph** structuré en deux sous-graphes :  
+
+1. **Sous-graphe Agent ReAct** :  
+   - Dispose de deux outils :  
+     - Un outil pour récupérer les logs en lien avec un incident.  
+     - Un outil pour récupérer les changements corrélés à l’incident.  
+   - Gère les questions en lien avec les incidents via cet agent.  
+
+2. **Sous-graphe général** :  
+   - Répond aux questions générales, hors contexte incident.  
+
+Pour la gestion des conversations, on utilise une **InMemorySaver** afin de stocker la conversation en cours.
+
+---
 
 ## Prérequis
 
-- Python 3.8+
-- Node.js 16+
-- npm ou yarn
+- Python 3.8+  
+- Node.js 16+  
+- npm ou yarn  
+
+---
 
 ## Installation
 
@@ -34,7 +70,6 @@ source venv/bin/activate
 
 # Installer les dépendances Python
 pip install -r backend/requirements.txt
-```
 
 ### 2. Configuration du frontend
 
@@ -75,9 +110,21 @@ npm run dev
 
 ## Accès à l'application
 
-- **Interface utilisateur** : Ouvrez votre navigateur à l'adresse indiquée par Vite (généralement `http://localhost:5173`)
-- **API Backend** : L'API sera disponible sur `http://localhost:8000`
-- **Documentation de l'API** : `http://localhost:8000/docs` (Swagger UI)
+- **Interface utilisateur** : Ouvrez votre navigateur à l'adresse indiquée par Vite (généralement `http://localhost:5173`)  
+- **API Backend** : L'API sera disponible sur `http://localhost:8000`  
+- **Documentation de l'API** : `http://localhost:8000/docs` (Swagger UI)  
+
+---
+
+### Remarque pour les tests
+
+Pour tester l'application, vous pouvez faire référence à l'incident **KDOEM45D**, qui est un exemple utilisé dans notre démonstration.  
+
+Nous avons généré :  
+- Les logs d'une erreur en lien avec cet incident.  
+- La liste des changements corrélés à cet incident.  
+
+Cela vous permettra de tester le fonctionnement de l'agent ReAct et des outils associés au traitement des incidents.
 
 ## Configuration
 
@@ -88,6 +135,10 @@ Créez un fichier `.env` à la racine du projet avec les variables nécessaires 
 ```env
 # Clé API OpenAI
 OPENAI_API_KEY=votre_cle_api_openai
+OPENAI_MODEL_NAME="gpt-4o-mini"
+
+# Le nombre maximum de boucle que l'agent peut faire
+RECURSION_LIMIT=5
 
 # Configuration du backend
 BACKEND_HOST=0.0.0.0
@@ -104,9 +155,3 @@ VITE_API_URL=http://localhost:8000
 - Modifiez les styles dans le dossier `frontend/src/`
 - Personnalisez les prompts dans le code du backend
 
-## Déploiement
-
-Pour un environnement de production, il est recommandé d'utiliser :
-- Gunicorn ou Uvicorn avec gestionnaire de processus (PM2, Supervisor) pour le backend
-- Build de production pour le frontend avec `npm run build`
-- Serveur web comme Nginx pour servir les fichiers statiques et faire du reverse proxy
